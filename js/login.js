@@ -4,12 +4,18 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   const user = document.getElementById("username").value.trim();
   const pass = document.getElementById("password").value.trim();
 
-  // Validación simple: usuario fijo
-  if (user === "admin" && pass === "1234") {
+  // Recuperar usuario y clave guardados en localStorage
+  const usuarioGuardado = localStorage.getItem("usuarioRegistrado");
+  const claveGuardada = localStorage.getItem("claveRegistrada");
+
+  // Validar
+  if (user === usuarioGuardado && pass === claveGuardada) {
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("user", JSON.stringify({ nombre: user }));
-    window.location.href = "dashboard.html"; // aún no creado
+    window.location.href = "dashboard.html";
   } else {
     alert("Usuario o contraseña incorrectos.");
   }
 });
+
+
