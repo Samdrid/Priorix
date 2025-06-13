@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tareas - Priorix</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #EEF1FA;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .card-tarea {
+      transition: all 0.3s ease;
+    }
+
+    .card-tarea:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .completada {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container py-5">
+    <div class="text-center mb-4">
+      <h2 class="text-primary">📋 Mis tareas</h2>
+      <p class="text-muted">Organizá tus misiones diarias</p>
+    </div>
+
+    <!-- Formulario para agregar tarea -->
+    <div class="card p-3 mb-4 shadow-sm">
+      <form id="formTarea" class="d-flex gap-3 flex-wrap">
+        <input type="text" id="tareaInput" class="form-control" placeholder="Escribí tu tarea..." required />
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-plus-circle me-1"></i> Agregar
+        </button>
+      </form>
+    </div>
+
+    <!-- Lista de tareas -->
+    <div id="listaTareas" class="row gy-3"></div>
+  </div>
+
+  <script>
+    let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+
+    function guardarTareas() {
+      localStorage.setItem("tareas", JSON.stringify(tareas));
+    }
+
+    function renderTareas() {
+      const contenedor = document.getElementById("listaTareas");
+      contenedor.innerHTML = "";
+
+      tareas.forEach((tarea, i) => {
+        const tareaHTML = `
+          <div class="col-md-6">
+            <div class="card card-tarea p-3 shadow-sm">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="${tarea.completada ? 'completada' : ''}">${tarea.texto}</span>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-success" onclick="completarTarea(${i})"><i class="bi bi-check-lg"></i></button>
+                  <button class="btn btn-warning" onclick="editarTarea(${i})"><i class="bi bi-pencil"></i></button>
+                  <button class="btn btn-danger" onclick="eliminarTarea(${i})"><i class="bi bi-trash"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        contenedor.innerHTML += tareaHTML;
+      });
+    }
+
+    function completarTarea(i) {
+      tareas[i].completada = !tareas[i].completada;
+      guardarTareas();
+      renderTareas();
+    }
+
+    function eliminarTarea(i) {
+      if (confirm("¿Eliminar esta tarea?")) {
+        tareas.splice(i, 1);
+        guardarTareas();
+        renderTareas();
+      }
+    }
+
+    function editarTarea(i) {
+      const nuevoTexto = prompt("Editar tarea:", tareas[i].texto);
+      if (nuevoTexto !== null && nuevoTexto.trim() !== "") {
+        tareas[i].texto = nuevoTexto.trim();
+        guardarTareas();
+        renderTareas();
+      }
+    }
+
+    document.getElementById("formTarea").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nuevaTarea = document.getElementById("tareaInput").value.trim();
+      if (nuevaTarea !== "") {
+        tareas.push({ texto: nuevaTarea, completada: false });
+        guardarTareas();
+        renderTareas();
+        this.reset();
+      }
+    });
+
+    renderTareas();
+  </script>
+</body>
+</html>
