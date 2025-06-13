@@ -5,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Priorix - Dashboard</title>
 
-  <!-- Bootstrap y estilos -->
+  <!-- Bootstrap + Íconos -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-  <link rel="stylesheet" href="css/estilos.css" />
 
-  <!-- Animaciones suaves -->
+  <!-- Estilos -->
   <style>
     body {
       background-color: #EEF1FA;
@@ -48,7 +47,7 @@
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- NAVBAR -->
   <nav class="navbar navbar-light bg-white px-4 shadow-sm">
     <div class="d-flex align-items-center">
       <img src="assets/img/logo.png" alt="Logo" width="40" class="me-2" />
@@ -57,13 +56,14 @@
     <button class="btn btn-outline-danger" onclick="logout()">Cerrar sesión</button>
   </nav>
 
-  <!-- MAIN -->
+  <!-- CONTENIDO -->
   <div class="container py-5 fade-in">
     <div class="dashboard-card text-center mx-auto" style="max-width: 600px;">
       <h2 id="saludoUsuario" class="mb-3 text-primary">¡Hola!</h2>
-      <p class="text-muted mb-4">Tu día como una aventura empieza ahora ✨</p>
+      <p class="text-muted mb-2">Tu día como una aventura empieza ahora ✨</p>
+      <p id="ubicacion" class="text-muted">📍 Detectando ubicación...</p>
 
-      <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+      <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
         <a href="tareas.html" class="btn btn-main btn-lg">
           <i class="bi bi-clipboard-check me-2"></i> Gestionar tareas
         </a>
@@ -74,19 +74,62 @@
     </div>
   </div>
 
-  <!-- Script -->
-  <script>
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      document.getElementById('saludoUsuario').textContent = `¡Hola, ${user.nombre}!`;
+ <script>
+  // Mostrar saludo personalizado
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    document.getElementById('saludoUsuario').textContent = `¡Hola, ${user.nombre}!`;
+  }
+
+  // Función para detectar la zona con coordenadas reales
+  function detectarZona(lat, lon) {
+    const distancia = (a, b) => Math.abs(a - b);
+
+    // Zona: Casa (ajustá esto con tu ubicación real desde Google Maps)
+    if (distancia(lat, 8.234) < 0.01 && distancia(lon, -73.345) < 0.01) {
+      return "🏠 Estás en casa";
     }
 
-    function logout() {
-      localStorage.removeItem('loggedIn');
-      localStorage.removeItem('user');
-      window.location.href = "index.html";
+    // Zona: Universidad
+    if (distancia(lat, 8.2455) < 0.01 && distancia(lon, -73.356) < 0.01) {
+      return "🎓 Estás en la universidad";
     }
-  </script>
+
+    // Zona: Trabajo
+    if (distancia(lat, 8.247) < 0.01 && distancia(lon, -73.358) < 0.01) {
+      return "💼 Estás en el trabajo";
+    }
+
+    // Si no coincide con ninguna
+    return "📍 Estás fuera de las zonas registradas";
+  }
+
+  // Obtener ubicación del navegador
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const zona = detectarZona(lat, lon);
+        document.getElementById("ubicacion").textContent = zona;
+      },
+      (error) => {
+        document.getElementById("ubicacion").textContent = "❌ No se pudo obtener la ubicación.";
+      }
+    );
+  } else {
+    document.getElementById("ubicacion").textContent = "⚠️ Tu navegador no soporta geolocalización.";
+  }
+
+  // Cerrar sesión
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("user");
+    window.location.href = "index.html";
+  }
+</script>
+
 </body>
 </html>
+
 
