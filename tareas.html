@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tareas - Priorix</title>
+  <title>Mis Tareas - Priorix</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
   <style>
@@ -12,107 +12,160 @@
       font-family: 'Poppins', sans-serif;
     }
 
-    .card-tarea {
-      transition: all 0.3s ease;
-    }
-
-    .card-tarea:hover {
-      transform: scale(1.02);
+    .zona-card {
+      border-radius: 15px;
+      background: white;
+      padding: 2rem;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      position: relative;
     }
 
-    .completada {
-      text-decoration: line-through;
-      color: gray;
+    .zona-card:hover {
+      transform: scale(1.03);
+    }
+
+    .zona-desbloqueada {
+      cursor: pointer;
+    }
+
+    .zona-bloqueada {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .candado {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      color: #dc3545;
     }
   </style>
 </head>
 <body>
 
-  <div class="container py-5">
-    <div class="text-center mb-4">
-      <h2 class="text-primary">📋 Mis tareas</h2>
-      <p class="text-muted">Organizá tus misiones diarias</p>
+<nav class="navbar navbar-light bg-white shadow-sm px-4">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand fw-bold text-primary" href="dashboard.html">
+      <img src="assets/img/logo.png" alt="Priorix" width="30" class="me-2" />
+      Priorix
+    </a>
+    <a href="dashboard.html" class="btn btn-outline-primary">
+      <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+    </a>
+  </div>
+</nav>
+
+  <div class="container py-5 text-center">
+    <h2 class="text-primary mb-3">📍 Mis tareas por zona</h2>
+    <p class="text-muted" id="zonaDetectada">Detectando ubicación...</p>
+
+    <div class="row mt-4 g-4">
+
+      <!-- CASA -->
+      <div class="col-md-3">
+        <div class="zona-card" id="zonaCasa" onclick="abrirZona('Casa')">
+          <h4>🏠 Casa</h4>
+          <p>Tareas para hacer en casa</p>
+          <i class="bi bi-lock-fill candado d-none" id="candadoCasa"></i>
+        </div>
+      </div>
+
+      <!-- UNIVERSIDAD -->
+      <div class="col-md-3">
+        <div class="zona-card" id="zonaUniversidad" onclick="abrirZona('Universidad')">
+          <h4>🎓 Universidad</h4>
+          <p>Actividades académicas</p>
+          <i class="bi bi-lock-fill candado d-none" id="candadoUniversidad"></i>
+        </div>
+      </div>
+
+      <!-- TRABAJO -->
+      <div class="col-md-3">
+        <div class="zona-card" id="zonaTrabajo" onclick="abrirZona('Trabajo')">
+          <h4>💼 Trabajo</h4>
+          <p>Tareas laborales</p>
+          <i class="bi bi-lock-fill candado d-none" id="candadoTrabajo"></i>
+        </div>
+      </div>
+
+      <!-- PENDIENTES -->
+      <div class="col-md-3">
+        <div class="zona-card zona-desbloqueada" onclick="abrirZona('Pendientes')">
+          <h4>📌 Pendientes</h4>
+          <p>Tareas generales (sin ubicación)</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Formulario para agregar tarea -->
-    <div class="card p-3 mb-4 shadow-sm">
-      <form id="formTarea" class="d-flex gap-3 flex-wrap">
-        <input type="text" id="tareaInput" class="form-control" placeholder="Escribí tu tarea..." required />
-        <button type="submit" class="btn btn-primary">
-          <i class="bi bi-plus-circle me-1"></i> Agregar
-        </button>
-      </form>
-    </div>
-
-    <!-- Lista de tareas -->
-    <div id="listaTareas" class="row gy-3"></div>
+    <a href="dashboard.html" class="btn btn-outline-primary mt-5">
+      <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+    </a>
   </div>
 
   <script>
-    let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
-
-    function guardarTareas() {
-      localStorage.setItem("tareas", JSON.stringify(tareas));
+    function detectarZona(lat, lon) {
+      const d = (a, b) => Math.abs(a - b);
+      if (d(lat, 8.244) < 0.01 && d(lon, -73.357) < 0.01) return "Casa";
+      if (d(lat, 8.2455) < 0.01 && d(lon, -73.356) < 0.01) return "Universidad";
+      if (d(lat, 8.247) < 0.01 && d(lon, -73.358) < 0.01) return "Trabajo";
+      return "Zona desconocida";
     }
 
-    function renderTareas() {
-      const contenedor = document.getElementById("listaTareas");
-      contenedor.innerHTML = "";
+    let zonaDetectada = "Zona desconocida";
 
-      tareas.forEach((tarea, i) => {
-        const tareaHTML = `
-          <div class="col-md-6">
-            <div class="card card-tarea p-3 shadow-sm">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="${tarea.completada ? 'completada' : ''}">${tarea.texto}</span>
-                <div class="btn-group btn-group-sm">
-                  <button class="btn btn-success" onclick="completarTarea(${i})"><i class="bi bi-check-lg"></i></button>
-                  <button class="btn btn-warning" onclick="editarTarea(${i})"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-danger" onclick="eliminarTarea(${i})"><i class="bi bi-trash"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>`;
-        contenedor.innerHTML += tareaHTML;
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          zonaDetectada = detectarZona(lat, lon);
+          document.getElementById("zonaDetectada").textContent = "Estás en: " + zonaDetectada;
+          actualizarZonas();
+        },
+        () => {
+          document.getElementById("zonaDetectada").textContent = "❌ No se pudo detectar tu ubicación.";
+          bloquearTodas();
+        }
+      );
+    }
+
+    function actualizarZonas() {
+      const zonas = ["Casa", "Universidad", "Trabajo"];
+      zonas.forEach((zona) => {
+        const card = document.getElementById("zona" + zona);
+        const candado = document.getElementById("candado" + zona);
+        if (zona === zonaDetectada) {
+          card.classList.add("zona-desbloqueada");
+        } else {
+          card.classList.add("zona-bloqueada");
+          candado.classList.remove("d-none");
+        }
       });
     }
 
-    function completarTarea(i) {
-      tareas[i].completada = !tareas[i].completada;
-      guardarTareas();
-      renderTareas();
+    function bloquearTodas() {
+      ["Casa", "Universidad", "Trabajo"].forEach(zona => {
+        document.getElementById("zona" + zona).classList.add("zona-bloqueada");
+        document.getElementById("candado" + zona).classList.remove("d-none");
+      });
     }
 
-    function eliminarTarea(i) {
-      if (confirm("¿Eliminar esta tarea?")) {
-        tareas.splice(i, 1);
-        guardarTareas();
-        renderTareas();
+    function abrirZona(zona) {
+      if (zona === zonaDetectada || zona === "Pendientes") {
+        localStorage.setItem("zonaActual", zona);
+        window.location.href = "tareas_zona.html"; // misma vista para todas, cambia solo la zona
+      } else {
+        alert("🚫 Solo podés acceder a esta zona si estás físicamente allí.");
       }
     }
 
-    function editarTarea(i) {
-      const nuevoTexto = prompt("Editar tarea:", tareas[i].texto);
-      if (nuevoTexto !== null && nuevoTexto.trim() !== "") {
-        tareas[i].texto = nuevoTexto.trim();
-        guardarTareas();
-        renderTareas();
-      }
+    function logout() {
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("user");
+      window.location.href = "index.html";
     }
-
-    document.getElementById("formTarea").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const nuevaTarea = document.getElementById("tareaInput").value.trim();
-      if (nuevaTarea !== "") {
-        tareas.push({ texto: nuevaTarea, completada: false });
-        guardarTareas();
-        renderTareas();
-        this.reset();
-      }
-    });
-
-    renderTareas();
   </script>
 </body>
 </html>
