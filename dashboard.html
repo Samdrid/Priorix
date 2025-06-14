@@ -83,7 +83,8 @@
 
   <!-- DASHBOARD PRINCIPAL -->
   <div id="pantallaDashboard" class="dashboard-card text-center mx-auto d-none" style="max-width: 600px;">
-    <h2 class="text-primary">¡Hola!</h2>
+    <h2 class="text-primary" id="saludo"></h2>
+
     <p class="text-muted">Tu día como una aventura empieza ahora ✨</p>
     <p id="ubicacion" class="text-muted">📍 Detectando ubicación...</p>
 
@@ -133,6 +134,11 @@
 </div>
 <script>
   const perfil = JSON.parse(localStorage.getItem("perfil"));
+  const saludo = document.getElementById("saludo");
+  if (perfil && perfil.apodo && saludo) {
+  saludo.textContent = `¡Hola, ${perfil.apodo}!`;
+}
+
   const pantallaPerfil = document.getElementById("pantallaPerfil");
   const pantallaDashboard = document.getElementById("pantallaDashboard");
 
