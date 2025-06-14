@@ -4,10 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - Priorix</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
-
   <style>
     body {
       background-color: #EEF1FA;
@@ -33,7 +31,8 @@
   </style>
 </head>
 <body>
-<!-- NAVBAR -->
+
+<!-- NAV -->
 <nav class="navbar navbar-light bg-white shadow-sm px-4">
   <div class="container-fluid d-flex justify-content-between align-items-center">
     <a class="navbar-brand fw-bold text-primary" href="#">
@@ -50,41 +49,37 @@
     </div>
   </div>
 </nav>
+
 <div class="container fade-in">
 
-  <!-- SECCIÓN "ANTES DE COMENZAR" -->
+  <!-- FORMULARIO INICIAL -->
   <div id="pantallaPerfil" class="dashboard-card mx-auto" style="max-width: 600px;">
-    <h4 class="text-primary">✨ Antes de comenzar...</h4>
-    <p class="text-muted">
-      ¡Hola!  Antes de arrancar con tu día, contanos un poco sobre vos.  
-      Así Priorix puede ayudarte a organizar mejor tus rutinas, estudios y metas 
-    </p>
-
+    <h4 class="text-primary">✨ Bienvenido a Priorix...</h4>
+    <p class="text-muted">Antes de empenzar, cuentanos un poco sobre ti, para ayudarte a organizar tu día.</p>
     <form id="formPerfil">
       <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="apodo" placeholder="Apodo" required />
+        <input type="text" class="form-control" id="apodo" required />
         <label for="apodo">¿Cómo te gusta que te llamen?</label>
       </div>
       <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="carrera" placeholder="Carrera" />
+        <input type="text" class="form-control" id="carrera" />
         <label for="carrera">¿Qué estás estudiando?</label>
       </div>
       <div class="form-floating mb-3">
-        <input type="text" class="form-control" id="trabajo" placeholder="Trabajo" />
+        <input type="text" class="form-control" id="trabajo" />
         <label for="trabajo">¿En qué trabajás?</label>
       </div>
       <div class="form-floating mb-3">
-        <textarea class="form-control" placeholder="Meta" id="meta" style="height: 80px"></textarea>
+        <textarea class="form-control" id="meta" style="height: 80px"></textarea>
         <label for="meta">¿Cuál es tu meta esta semana?</label>
       </div>
       <button type="submit" class="btn btn-main w-100">Guardar y comenzar </button>
     </form>
   </div>
 
-  <!-- DASHBOARD PRINCIPAL -->
+  <!-- DASHBOARD -->
   <div id="pantallaDashboard" class="dashboard-card text-center mx-auto d-none" style="max-width: 600px;">
-    <h2 class="text-primary" id="saludo"></h2>
-
+    <h2 class="text-primary" id="saludo">¡Hola!</h2>
     <p class="text-muted">Tu día como una aventura empieza ahora ✨</p>
     <p id="ubicacion" class="text-muted">📍 Detectando ubicación...</p>
 
@@ -98,30 +93,31 @@
     </div>
   </div>
 </div>
+
 <!-- MODAL EDITAR PERFIL -->
 <div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <form id="formEditarPerfil">
         <div class="modal-header">
-          <h5 class="modal-title text-primary" id="perfilModalLabel">✏️ Editar mi perfil</h5>
+          <h5 class="modal-title text-primary" id="perfilModalLabel"> Editar mi perfil</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="editApodo" placeholder="Apodo" required />
+            <input type="text" class="form-control" id="editApodo" required />
             <label for="editApodo">¿Cómo te gusta que te llamen?</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="editCarrera" placeholder="Carrera" />
+            <input type="text" class="form-control" id="editCarrera" />
             <label for="editCarrera">¿Qué estás estudiando?</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="editTrabajo" placeholder="Trabajo" />
+            <input type="text" class="form-control" id="editTrabajo" />
             <label for="editTrabajo">¿En qué trabajás?</label>
           </div>
           <div class="form-floating mb-3">
-            <textarea class="form-control" placeholder="Meta" id="editMeta" style="height: 80px"></textarea>
+            <textarea class="form-control" id="editMeta" style="height: 80px"></textarea>
             <label for="editMeta">¿Cuál es tu meta esta semana?</label>
           </div>
         </div>
@@ -132,76 +128,51 @@
     </div>
   </div>
 </div>
-<script>
-  const perfil = JSON.parse(localStorage.getItem("perfil"));
-  const saludo = document.getElementById("saludo");
-  if (perfil && perfil.apodo && saludo) {
-  saludo.textContent = `¡Hola, ${perfil.apodo}!`;
-}
 
+<!-- SCRIPTS -->
+<script>
   const pantallaPerfil = document.getElementById("pantallaPerfil");
   const pantallaDashboard = document.getElementById("pantallaDashboard");
+  const saludo = document.getElementById("saludo");
+  const ubicacion = document.getElementById("ubicacion");
 
-  // Mostrar dashboard si ya hay perfil
-  if (perfil && perfil.apodo) {
-    pantallaPerfil.classList.add("d-none");
-    pantallaDashboard.classList.remove("d-none");
-    solicitarUbicacion();
-  }
+  window.addEventListener("DOMContentLoaded", () => {
+    const perfil = JSON.parse(localStorage.getItem("perfil"));
 
-  // Guardar perfil y solicitar ubicación
+    if (perfil && perfil.apodo) {
+      // Mostrar dashboard si ya hay perfil
+      pantallaPerfil.classList.add("d-none");
+      pantallaDashboard.classList.remove("d-none");
+
+      document.getElementById("apodo").value = perfil.apodo || "";
+      document.getElementById("carrera").value = perfil.carrera || "";
+      document.getElementById("trabajo").value = perfil.trabajo || "";
+      document.getElementById("meta").value = perfil.meta || "";
+
+      document.getElementById("editApodo").value = perfil.apodo || "";
+      document.getElementById("editCarrera").value = perfil.carrera || "";
+      document.getElementById("editTrabajo").value = perfil.trabajo || "";
+      document.getElementById("editMeta").value = perfil.meta || "";
+
+      if (saludo) saludo.textContent = `¡Hola, ${perfil.apodo}!`;
+
+      solicitarUbicacion();
+    }
+  });
+
   document.getElementById("formPerfil").addEventListener("submit", function(e) {
     e.preventDefault();
-    const perfilData = {
+    const perfil = {
       apodo: document.getElementById("apodo").value.trim(),
       carrera: document.getElementById("carrera").value.trim(),
       trabajo: document.getElementById("trabajo").value.trim(),
       meta: document.getElementById("meta").value.trim()
     };
-    localStorage.setItem("perfil", JSON.stringify(perfilData));
+    localStorage.setItem("perfil", JSON.stringify(perfil));
     pantallaPerfil.classList.add("d-none");
     pantallaDashboard.classList.remove("d-none");
+    saludo.textContent = `¡Hola, ${perfil.apodo}!`;
     solicitarUbicacion();
-  });
-
-  // Detectar zona con ubicación
-  function solicitarUbicacion() {
-    const ubicacion = document.getElementById("ubicacion");
-    if (!navigator.geolocation) {
-      ubicacion.textContent = " Tu navegador no soporta geolocalización.";
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        const zona = detectarZona(lat, lon);
-        localStorage.setItem("zonaActual", zona);
-        if (ubicacion) ubicacion.textContent = zona;
-      },
-      () => {
-        if (ubicacion) ubicacion.textContent = " No se pudo obtener la ubicación.";
-      }
-    );
-  }
-
-  function detectarZona(lat, lon) {
-    const d = (a, b) => Math.abs(a - b);
-    if (d(lat, 8.244) < 0.01 && d(lon, -73.357) < 0.01) return "🏠 Estás en casa";
-    if (d(lat, 8.2455) < 0.01 && d(lon, -73.356) < 0.01) return "🎓 Estás en la universidad";
-    if (d(lat, 8.247) < 0.01 && d(lon, -73.358) < 0.01) return "💼 Estás en el trabajo";
-    return "📍 Estás fuera de las zonas registradas";
-  }
-
-  // Editar perfil
-  window.addEventListener("DOMContentLoaded", () => {
-    if (perfil) {
-      document.getElementById("editApodo").value = perfil.apodo || "";
-      document.getElementById("editCarrera").value = perfil.carrera || "";
-      document.getElementById("editTrabajo").value = perfil.trabajo || "";
-      document.getElementById("editMeta").value = perfil.meta || "";
-    }
   });
 
   document.getElementById("formEditarPerfil").addEventListener("submit", function(e) {
@@ -216,16 +187,47 @@
     location.reload();
   });
 
+  function solicitarUbicacion() {
+    if (!navigator.geolocation) {
+      ubicacion.textContent = "Tu navegador no soporta geolocalización.";
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const zona = detectarZona(lat, lon);
+        localStorage.setItem("zonaActual", zona);
+        ubicacion.textContent = zona;
+      },
+      () => {
+        ubicacion.textContent = " No se pudo obtener la ubicación.";
+      }
+    );
+  }
+
+  function detectarZona(lat, lon) {
+    const d = (a, b) => Math.abs(a - b);
+    if (d(lat, 8.244) < 0.01 && d(lon, -73.357) < 0.01) return "🏠 Estás en casa";
+    if (d(lat, 8.2455) < 0.01 && d(lon, -73.356) < 0.01) return "🎓 Estás en la universidad";
+    if (d(lat, 8.247) < 0.01 && d(lon, -73.358) < 0.01) return "💼 Estás en el trabajo";
+    return "📍 Estás fuera de las zonas registradas";
+  }
+
   function logout() {
     localStorage.clear();
     window.location.href = "index.html";
   }
 </script>
-
-<!-- Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+ 
+
+
+
 
 
  

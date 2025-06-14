@@ -4,46 +4,124 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registro - Priorix</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-</head>
-<body class="bg-light d-flex justify-content-center align-items-center vh-100">
 
-  <div class="card p-4" style="width: 100%; max-width: 400px;">
-    <h3 class="text-center mb-4">Crear cuenta</h3>
-    
-    <form id="registroForm">
-      <div class="mb-3">
-        <label for="nuevoUsuario" class="form-label">Usuario</label>
-        <input type="text" class="form-control" id="nuevoUsuario" required />
+  <!-- Bootstrap + Íconos -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      background-color: #EEF1FA;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .registro-card {
+      max-width: 400px;
+      margin: 5rem auto;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .form-control {
+      border-radius: 12px;
+    }
+
+    .btn-register {
+      background-color: #FFA36C;
+      color: white;
+      border: none;
+      border-radius: 12px;
+    }
+
+    .btn-register:hover {
+      background-color: #e28850;
+    }
+
+    .form-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #FFA36C;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-group input {
+      padding-left: 2.5rem;
+    }
+
+    .logo-img {
+      width: 80px;
+    }
+
+    .mensaje-exito {
+      display: none;
+      margin-top: 1rem;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="registro-card text-center">
+    <img src="assets/img/logo.png" alt="Logo Priorix" class="logo-img mb-3">
+    <h2 class="text-primary fw-bold">Crear cuenta</h2>
+    <p class="text-muted mb-4">Registrate para comenzar tu aventura ✨</p>
+
+    <form id="formRegistro">
+      <div class="form-group mb-3 text-start">
+        <i class="bi bi-person-fill form-icon"></i>
+        <input type="text" id="usuario" class="form-control" placeholder="Usuario" required />
       </div>
-      <div class="mb-3">
-        <label for="nuevaClave" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="nuevaClave" required />
+
+      <div class="form-group mb-3 text-start">
+        <i class="bi bi-envelope-fill form-icon"></i>
+        <input type="email" id="correo" class="form-control" placeholder="Correo electrónico" required />
       </div>
-      <div class="d-grid">
-        <button type="submit" class="btn btn-primary">Registrarse</button>
+
+      <div class="form-group mb-4 text-start">
+        <i class="bi bi-lock-fill form-icon"></i>
+        <input type="password" id="clave" class="form-control" placeholder="Contraseña" required />
       </div>
+
+      <button type="submit" class="btn btn-register w-100">Registrarse</button>
+
+      <p id="mensajeExito" class="mensaje-exito">✔ Registro exitoso. Redirigiendo...</p>
     </form>
   </div>
 
   <script>
-    document.getElementById("registroForm").addEventListener("submit", function(e) {
+    document.getElementById("formRegistro").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const usuario = document.getElementById("nuevoUsuario").value.trim();
-      const clave = document.getElementById("nuevaClave").value.trim();
+      const usuario = document.getElementById("usuario").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const clave = document.getElementById("clave").value.trim();
 
-      if (usuario !== "" && clave !== "") {
-        // Guardamos el usuario y la contraseña
-        localStorage.setItem("usuarioRegistrado", usuario);
-        localStorage.setItem("claveRegistrada", clave);
-        alert("¡Usuario registrado con éxito!");
+      if (usuario && correo && clave) {
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("user", JSON.stringify({ nombre: usuario, correo }));
 
-        // Redirige al login
-        window.location.href = "index.html";
+        document.getElementById("mensajeExito").style.display = "block";
+
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+      } else {
+        alert("Por favor, completá todos los campos.");
       }
     });
   </script>
 </body>
 </html>
+
+
+
+
 
