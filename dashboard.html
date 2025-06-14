@@ -2,134 +2,234 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Priorix - Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Priorix</title>
 
-  <!-- Bootstrap + Íconos -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
 
-  <!-- Estilos -->
   <style>
     body {
       background-color: #EEF1FA;
       font-family: 'Poppins', sans-serif;
     }
 
-    .fade-in {
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .dashboard-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-top: 2rem;
     }
 
     .btn-main {
       background-color: #5D78FF;
       color: white;
-      border: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .btn-main:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(93, 120, 255, 0.4);
-    }
-
-    .dashboard-card {
-      border-radius: 20px;
-      background: white;
-      padding: 2rem;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      background-color: #3f59e0;
     }
   </style>
 </head>
 <body>
-
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-light bg-white px-4 shadow-sm">
-    <div class="d-flex align-items-center">
-      <img src="assets/img/logo.png" alt="Logo" width="40" class="me-2" />
-      <h4 class="mb-0 fw-bold text-primary">Priorix</h4>
-    </div>
-    <button class="btn btn-outline-danger" onclick="logout()">Cerrar sesión</button>
-  </nav>
-
-  <!-- CONTENIDO -->
-  <div class="container py-5 fade-in">
-    <div class="dashboard-card text-center mx-auto" style="max-width: 600px;">
-      <h2 id="saludoUsuario" class="mb-3 text-primary">¡Hola!</h2>
-      <p class="text-muted mb-2">Tu día como una aventura empieza ahora ✨</p>
-      <p id="ubicacion" class="text-muted">📍 Detectando ubicación...</p>
-
-      <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
-        <a href="tareas.html" class="btn btn-main btn-lg">
-          <i class="bi bi-clipboard-check me-2"></i> Gestionar tareas
-        </a>
-        <a href="progreso.html" class="btn btn-outline-primary btn-lg">
-          <i class="bi bi-bar-chart-fill me-2"></i> Ver progreso
-        </a>
-      </div>
+<!-- NAVBAR -->
+<nav class="navbar navbar-light bg-white shadow-sm px-4">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+      <img src="assets/img/logo.png" alt="Priorix" width="30" class="me-2" />
+      Priorix
+    </a>
+    <div>
+      <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#perfilModal">
+        <i class="bi bi-person-lines-fill me-1"></i> Editar perfil
+      </button>
+      <button class="btn btn-outline-danger" onclick="logout()">
+        <i class="bi bi-box-arrow-right me-1"></i> Volver al inicio de sesión
+      </button>
     </div>
   </div>
+</nav>
+<div class="container fade-in">
 
- <script>
-  // Mostrar saludo personalizado
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (user) {
-    document.getElementById('saludoUsuario').textContent = `¡Hola, ${user.nombre}!`;
+  <!-- SECCIÓN "ANTES DE COMENZAR" -->
+  <div id="pantallaPerfil" class="dashboard-card mx-auto" style="max-width: 600px;">
+    <h4 class="text-primary">✨ Antes de comenzar...</h4>
+    <p class="text-muted">
+      ¡Hola!  Antes de arrancar con tu día, contanos un poco sobre vos.  
+      Así Priorix puede ayudarte a organizar mejor tus rutinas, estudios y metas 
+    </p>
+
+    <form id="formPerfil">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="apodo" placeholder="Apodo" required />
+        <label for="apodo">¿Cómo te gusta que te llamen?</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="carrera" placeholder="Carrera" />
+        <label for="carrera">¿Qué estás estudiando?</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="trabajo" placeholder="Trabajo" />
+        <label for="trabajo">¿En qué trabajás?</label>
+      </div>
+      <div class="form-floating mb-3">
+        <textarea class="form-control" placeholder="Meta" id="meta" style="height: 80px"></textarea>
+        <label for="meta">¿Cuál es tu meta esta semana?</label>
+      </div>
+      <button type="submit" class="btn btn-main w-100">Guardar y comenzar </button>
+    </form>
+  </div>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <div id="pantallaDashboard" class="dashboard-card text-center mx-auto d-none" style="max-width: 600px;">
+    <h2 class="text-primary">¡Hola!</h2>
+    <p class="text-muted">Tu día como una aventura empieza ahora ✨</p>
+    <p id="ubicacion" class="text-muted">📍 Detectando ubicación...</p>
+
+    <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-4">
+      <a href="tareas.html" class="btn btn-main btn-lg">
+        <i class="bi bi-clipboard-check me-2"></i> Ver tareas
+      </a>
+      <a href="progreso.html" class="btn btn-outline-primary btn-lg">
+        <i class="bi bi-bar-chart-fill me-2"></i> Ver progreso
+      </a>
+    </div>
+  </div>
+</div>
+<!-- MODAL EDITAR PERFIL -->
+<div class="modal fade" id="perfilModal" tabindex="-1" aria-labelledby="perfilModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formEditarPerfil">
+        <div class="modal-header">
+          <h5 class="modal-title text-primary" id="perfilModalLabel">✏️ Editar mi perfil</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editApodo" placeholder="Apodo" required />
+            <label for="editApodo">¿Cómo te gusta que te llamen?</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editCarrera" placeholder="Carrera" />
+            <label for="editCarrera">¿Qué estás estudiando?</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="editTrabajo" placeholder="Trabajo" />
+            <label for="editTrabajo">¿En qué trabajás?</label>
+          </div>
+          <div class="form-floating mb-3">
+            <textarea class="form-control" placeholder="Meta" id="editMeta" style="height: 80px"></textarea>
+            <label for="editMeta">¿Cuál es tu meta esta semana?</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-main w-100">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const perfil = JSON.parse(localStorage.getItem("perfil"));
+  const pantallaPerfil = document.getElementById("pantallaPerfil");
+  const pantallaDashboard = document.getElementById("pantallaDashboard");
+
+  // Mostrar dashboard si ya hay perfil
+  if (perfil && perfil.apodo) {
+    pantallaPerfil.classList.add("d-none");
+    pantallaDashboard.classList.remove("d-none");
+    solicitarUbicacion();
   }
 
-  // Función para detectar la zona con coordenadas reales
-  function detectarZona(lat, lon) {
-    const distancia = (a, b) => Math.abs(a - b);
+  // Guardar perfil y solicitar ubicación
+  document.getElementById("formPerfil").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const perfilData = {
+      apodo: document.getElementById("apodo").value.trim(),
+      carrera: document.getElementById("carrera").value.trim(),
+      trabajo: document.getElementById("trabajo").value.trim(),
+      meta: document.getElementById("meta").value.trim()
+    };
+    localStorage.setItem("perfil", JSON.stringify(perfilData));
+    pantallaPerfil.classList.add("d-none");
+    pantallaDashboard.classList.remove("d-none");
+    solicitarUbicacion();
+  });
 
-    // Zona: Casa (ajustá esto con tu ubicación real desde Google Maps)
-    if (distancia(lat, 8.234) < 0.01 && distancia(lon, -73.345) < 0.01) {
-      return "🏠 Estás en casa";
+  // Detectar zona con ubicación
+  function solicitarUbicacion() {
+    const ubicacion = document.getElementById("ubicacion");
+    if (!navigator.geolocation) {
+      ubicacion.textContent = " Tu navegador no soporta geolocalización.";
+      return;
     }
 
-    // Zona: Universidad
-    if (distancia(lat, 8.2455) < 0.01 && distancia(lon, -73.356) < 0.01) {
-      return "🎓 Estás en la universidad";
-    }
-
-    // Zona: Trabajo
-    if (distancia(lat, 8.247) < 0.01 && distancia(lon, -73.358) < 0.01) {
-      return "💼 Estás en el trabajo";
-    }
-
-    // Si no coincide con ninguna
-    return "📍 Estás fuera de las zonas registradas";
-  }
-
-  // Obtener ubicación del navegador
-  if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         const zona = detectarZona(lat, lon);
-        document.getElementById("ubicacion").textContent = zona;
+        localStorage.setItem("zonaActual", zona);
+        if (ubicacion) ubicacion.textContent = zona;
       },
-      (error) => {
-        document.getElementById("ubicacion").textContent = "❌ No se pudo obtener la ubicación.";
+      () => {
+        if (ubicacion) ubicacion.textContent = " No se pudo obtener la ubicación.";
       }
     );
-  } else {
-    document.getElementById("ubicacion").textContent = "⚠️ Tu navegador no soporta geolocalización.";
   }
 
-  // Cerrar sesión
+  function detectarZona(lat, lon) {
+    const d = (a, b) => Math.abs(a - b);
+    if (d(lat, 8.244) < 0.01 && d(lon, -73.357) < 0.01) return "🏠 Estás en casa";
+    if (d(lat, 8.2455) < 0.01 && d(lon, -73.356) < 0.01) return "🎓 Estás en la universidad";
+    if (d(lat, 8.247) < 0.01 && d(lon, -73.358) < 0.01) return "💼 Estás en el trabajo";
+    return "📍 Estás fuera de las zonas registradas";
+  }
+
+  // Editar perfil
+  window.addEventListener("DOMContentLoaded", () => {
+    if (perfil) {
+      document.getElementById("editApodo").value = perfil.apodo || "";
+      document.getElementById("editCarrera").value = perfil.carrera || "";
+      document.getElementById("editTrabajo").value = perfil.trabajo || "";
+      document.getElementById("editMeta").value = perfil.meta || "";
+    }
+  });
+
+  document.getElementById("formEditarPerfil").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const perfilEditado = {
+      apodo: document.getElementById("editApodo").value.trim(),
+      carrera: document.getElementById("editCarrera").value.trim(),
+      trabajo: document.getElementById("editTrabajo").value.trim(),
+      meta: document.getElementById("editMeta").value.trim()
+    };
+    localStorage.setItem("perfil", JSON.stringify(perfilEditado));
+    location.reload();
+  });
+
   function logout() {
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("user");
+    localStorage.clear();
     window.location.href = "index.html";
   }
 </script>
 
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+ 
+
+
+
+
+  
+
+
+
 
 
