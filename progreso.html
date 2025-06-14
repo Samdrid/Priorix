@@ -11,71 +11,73 @@
       background-color: #EEF1FA;
       font-family: 'Poppins', sans-serif;
     }
-    .fade-in {
-      animation: fadeIn 1.2s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+
     .progreso-card {
       background: white;
-      border-radius: 20px;
+      border-radius: 15px;
       padding: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .puntos {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #5D78FF;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-top: 3rem;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <div class="container py-5 fade-in">
-    <div class="text-center mb-4">
-      <h2 class="text-primary">⭐ Mi progreso</h2>
-      <p class="text-muted">Revisá tu avance y celebrá tus logros</p>
+  <!-- SOLO LOGO SUPERIOR -->
+  <nav class="navbar navbar-light bg-white shadow-sm px-4">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-primary" href="dashboard.html">
+        <img src="assets/img/logo.png" alt="Priorix" width="30" class="me-2" />
+        Priorix
+      </a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="progreso-card mx-auto" style="max-width: 600px;">
+      <h2 class="text-primary mb-3">📊 Tu progreso</h2>
+      <div id="contenidoProgreso"></div>
     </div>
 
-    <div class="progreso-card text-center mx-auto" style="max-width: 500px;">
-      <p class="mb-1">Tareas completadas:</p>
-      <div id="tareasCompletadas" class="puntos">0</div>
-
-      <hr>
-
-      <p class="mb-1">Puntos acumulados:</p>
-      <div id="puntos" class="puntos">0</div>
-
-      <hr>
-
-      <p class="text-success mt-4" id="mensajeLogro"></p>
+    <!-- BOTÓN ABAJO -->
+    <div class="text-center mt-4 mb-5">
+      <a href="dashboard.html" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+      </a>
     </div>
   </div>
 
   <script>
-    // Obtener las tareas del localStorage
-    const tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+    const zonas = ["Casa", "Universidad", "Trabajo", "Pendientes"];
+    let totalCompletadas = 0;
+    let detalles = "";
 
-    const completadas = tareas.filter(t => t.completada);
-    const totalCompletadas = completadas.length;
-    const puntos = totalCompletadas * 10;
+    zonas.forEach(zona => {
+      const tareas = JSON.parse(localStorage.getItem("tareas_" + zona)) || [];
+      const completadas = tareas.filter(t => t.completada).length;
+      totalCompletadas += completadas;
+      if (completadas > 0) {
+        detalles += `<p> ${completadas} tareas completadas en <strong>${zona}</strong></p>`;
+      }
+    });
 
-    document.getElementById("tareasCompletadas").textContent = totalCompletadas;
-    document.getElementById("puntos").textContent = puntos;
-
-    // Mostrar mensaje motivador
-    const mensaje = document.getElementById("mensajeLogro");
+    const contenido = document.getElementById("contenidoProgreso");
     if (totalCompletadas === 0) {
-      mensaje.textContent = "¡Empezá tu aventura completando tu primera tarea!";
-    } else if (totalCompletadas < 5) {
-      mensaje.textContent = "¡Buen comienzo! Seguí así 💪";
-    } else if (totalCompletadas < 10) {
-      mensaje.textContent = "¡Estás en racha! Ya sos una estrella 🌟";
+      contenido.innerHTML = `
+        <p class="text-muted">Todavía no has completado tareas.<br>¡Vamos a por esa primera misión! 💪</p>
+        <h4 class="mt-4">Puntos acumulados: 0</h4>
+      `;
     } else {
-      mensaje.textContent = "¡Sos una leyenda de Priorix! 🎉🔥";
+      contenido.innerHTML = `
+        ${detalles}
+        <hr>
+        <h4> Total de puntos: ${totalCompletadas * 10}</h4>
+      `;
     }
   </script>
 </body>
 </html>
+
+
+
